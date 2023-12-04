@@ -2,11 +2,12 @@ import * as dotenv from 'dotenv';
 import express from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
-import swaggerJsdoc from 'swagger-jsdoc';
-import swaggerUi from 'swagger-ui-express';
+// import swaggerJsdoc from 'swagger-jsdoc';
+// import swaggerUi from 'swagger-ui-express';
 import swaggerDocs from './utils/swagger';
 
 import { productRouter } from './product/product.router';
+import { productDetailsRouter } from './productDetails/productDetails.router';
 
 dotenv.config();
 
@@ -22,6 +23,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 app.use('/api/products', productRouter);
+app.use('/api/productdetails', productDetailsRouter);
 
 app.listen(port, () => {
   console.log(`listening on http://localhost:${port}`);

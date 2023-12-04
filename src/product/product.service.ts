@@ -1,4 +1,5 @@
 import { db } from '../utils/db.server';
+import { ProductDetails } from '../productDetails/productDetails.service';
 
 export type Product = {
   id: number;
@@ -6,6 +7,7 @@ export type Product = {
   description: string;
   retailPrice: number;
   retailSplit: number;
+  //details?: ProductDetails;
 };
 
 export const listProducts = async (): Promise<Product[]> => {
@@ -16,6 +18,19 @@ export const listProducts = async (): Promise<Product[]> => {
       description: true,
       retailPrice: true,
       retailSplit: true,
+      ProductDetails: {
+        select: {
+          productId: true,
+          salePrice: true,
+          saleSplit: true,
+          saleStart: true,
+          saleEnd: true,
+          tprPrice: true,
+          tprSplit: true,
+          tprStart: true,
+          tprEnd: true,
+        },
+      },
     },
   });
 };

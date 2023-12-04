@@ -25,10 +25,11 @@ const options: swaggerJsdoc.Options = {
         url: 'http://localhost:8007',
       },
     ],
-    components: [],
-    security: [{}],
   },
-  apis: ['./src/product/product.router.ts'],
+  apis: [
+    './src/product/product.router.ts',
+    './src/productDetails/productDetails.router.ts',
+  ],
 };
 
 const swaggerSpec = swaggerJsdoc(options);
