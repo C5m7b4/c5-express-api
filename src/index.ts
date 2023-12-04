@@ -2,6 +2,9 @@ import * as dotenv from 'dotenv';
 import express from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
+import swaggerJsdoc from 'swagger-jsdoc';
+import swaggerUi from 'swagger-ui-express';
+import swaggerDocs from './utils/swagger';
 
 import { productRouter } from './product/product.router';
 
@@ -22,4 +25,6 @@ app.use('/api/products', productRouter);
 
 app.listen(port, () => {
   console.log(`listening on http://localhost:${port}`);
+  swaggerDocs(app, port);
+  console.log(`swagger docs are available at http://localhost:${port}/docs`);
 });
