@@ -3,7 +3,6 @@ import { Product } from '../product/product.service';
 
 export type ProductDetails = {
   id: number;
-  productId: number;
   salePrice: number;
   saleSplit: number;
   saleStart: Date;
@@ -18,7 +17,6 @@ export const createDetails = async (
   details: ProductDetails
 ): Promise<ProductDetails> => {
   const {
-    productId,
     salePrice,
     saleSplit,
     saleStart,
@@ -30,7 +28,6 @@ export const createDetails = async (
   } = details;
   return db.productDetails.create({
     data: {
-      productId,
       salePrice,
       saleSplit,
       saleStart,
@@ -42,7 +39,6 @@ export const createDetails = async (
     },
     select: {
       id: true,
-      productId: true,
       salePrice: true,
       saleSplit: true,
       saleStart: true,
@@ -51,14 +47,14 @@ export const createDetails = async (
       tprSplit: true,
       tprStart: true,
       tprEnd: true,
-      product: {
-        select: {
-          upc: true,
-          description: true,
-          retailPrice: true,
-          retailSplit: true,
-        },
-      },
+      // product: {
+      //   select: {
+      //     upc: true,
+      //     description: true,
+      //     retailPrice: true,
+      //     retailSplit: true,
+      //   },
+      // },
     },
   });
 };

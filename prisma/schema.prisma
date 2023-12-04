@@ -30,14 +30,15 @@ model Store {
 }
 
 model Product {
-  id             Int              @id @default(autoincrement())
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
-  upc            String
-  description    String
-  retailPrice    Float
-  retailSplit    Int
-  ProductDetails ProductDetails[]
+  id          Int            @id @default(autoincrement())
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  upc         String
+  description String
+  retailPrice Float
+  retailSplit Int
+  details     ProductDetails @relation(fields: [detailsId], references: [id], onDelete: Cascade)
+  detailsId   Int            @unique
 }
 
 model ProductDetails {
@@ -52,6 +53,5 @@ model ProductDetails {
   tprSplit  Int
   tprStart  DateTime
   tprEnd    DateTime
-  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
-  productId Int
+  Product   Product?
 }
