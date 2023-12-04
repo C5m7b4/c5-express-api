@@ -5,7 +5,6 @@
  *     ProductDetails:
  *       type: object
  *       required:
- *         - productId
  *         - salePrice
  *         - saleSplit
  *         - saleStart
@@ -15,9 +14,6 @@
  *         - tprStart
  *         - tprEnd
  *       properties:
- *         productId:
- *           type: string
- *           description: The auto-generated id of the product details
  *         salePrice:
  *           type: string
  *           description: sale price of item
@@ -39,7 +35,6 @@
  *         tprEnd:
  *           type: string
  *       example:
- *         productId: 1
  *         salePrice: 2.39
  *         saleSplit: 1
  *         saleStart: 2/23/2023
@@ -60,11 +55,12 @@
  *        - ProductDetails
  */
 
-import express from 'express';
-import type { Request, Response } from 'express';
-import { body, validationResult } from 'express-validator';
+import express from "express";
+import type { Request, Response } from "express";
+import { body, validationResult } from "express-validator";
+import { Error } from "../types";
 
-import * as ProductDetailsService from './productDetails.service';
+import * as ProductDetailsService from "./productDetails.service";
 
 export const productDetailsRouter = express.Router();
 
@@ -82,8 +78,6 @@ export const productDetailsRouter = express.Router();
  *          schema:
  *            type: object
  *            properties:
- *              productId:
- *                type: number
  *              salePrice:
  *                type: number
  *              saleSplit:
@@ -101,7 +95,6 @@ export const productDetailsRouter = express.Router();
  *              tprEnd:
  *                type: string
  *            required:
- *              - productId
  *              - salePrice
  *              - saleSplit
  *              - saleStart
@@ -119,27 +112,26 @@ export const productDetailsRouter = express.Router();
  *          description: something went wrong
  */
 productDetailsRouter.post(
-  '/',
-  body('salePrice').isFloat(),
-  body('saleSplit').isInt(),
-  body('saleStart').isDate(),
-  body('saleEnd').isDate(),
-  body('tprPrice').isFloat(),
-  body('tprSplit').isInt(),
-  body('tprStart').isDate(),
-  body('tprEnd').isDate(),
-  body('productId').isInt(),
+  "/",
+  body("salePrice").isFloat(),
+  body("saleSplit").isInt(),
+  body("saleStart").isString(),
+  body("saleEnd").isString(),
+  body("tprPrice").isFloat(),
+  body("tprSplit").isInt(),
+  body("tprStart").isString(),
+  body("tprEnd").isString(),
   async (req: Request, resp: Response) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return resp.status(400).json({ errors: errors.array() });
     }
     try {
-      const details = req.body();
+      const details = req.body;
       const newDetails = await ProductDetailsService.createDetails(details);
       return resp.status(200).json(newDetails);
-    } catch (error: any) {
-      return resp.status(500).json(error.message);
+    } catch (error) {
+      return resp.status(500).json((error as Error).message);
     }
-  }
+  },
 );

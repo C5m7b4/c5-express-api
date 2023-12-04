@@ -1,5 +1,4 @@
-import { db } from '../utils/db.server';
-import { ProductDetails } from '../productDetails/productDetails.service';
+import { db } from "../utils/db.server";
 
 export type Product = {
   id: number;
@@ -7,7 +6,7 @@ export type Product = {
   description: string;
   retailPrice: number;
   retailSplit: number;
-  //details?: ProductDetails;
+  detailsId?: number;
 };
 
 export const listProducts = async (): Promise<Product[]> => {
@@ -18,9 +17,8 @@ export const listProducts = async (): Promise<Product[]> => {
       description: true,
       retailPrice: true,
       retailSplit: true,
-      ProductDetails: {
+      details: {
         select: {
-          productId: true,
           salePrice: true,
           saleSplit: true,
           saleStart: true,
@@ -51,7 +49,7 @@ export const getProduct = async (id: number): Promise<Product | null> => {
 };
 
 export const createProduct = async (product: Product): Promise<Product> => {
-  const { upc, description, retailPrice, retailSplit } = product;
+  const { upc, description, retailPrice, retailSplit, detailsId = 0 } = product;
 
   return db.product.create({
     data: {
@@ -59,6 +57,7 @@ export const createProduct = async (product: Product): Promise<Product> => {
       description,
       retailPrice,
       retailSplit,
+      detailsId,
     },
     select: {
       id: true,
@@ -66,13 +65,14 @@ export const createProduct = async (product: Product): Promise<Product> => {
       description: true,
       retailPrice: true,
       retailSplit: true,
+      detailsId: true,
     },
   });
 };
 
 export const updateProduct = async (
   product: Product,
-  id: number
+  id: number,
 ): Promise<Product> => {
   const { upc, description, retailPrice, retailSplit } = product;
   return db.product.update({

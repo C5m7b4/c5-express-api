@@ -58,11 +58,12 @@
  *        - Products
  */
 
-import express from 'express';
-import type { Request, Response } from 'express';
-import { body, validationResult } from 'express-validator';
+import express from "express";
+import type { Request, Response } from "express";
+import { body, validationResult } from "express-validator";
+import type { Error } from "../types";
 
-import * as ProductService from './product.service';
+import * as ProductService from "./product.service";
 
 export const productRouter = express.Router();
 
@@ -79,12 +80,12 @@ export const productRouter = express.Router();
  *        500:
  *          description: something went wrong
  */
-productRouter.get('/', async (req: Request, resp: Response) => {
+productRouter.get("/", async (req: Request, resp: Response) => {
   try {
     const products = await ProductService.listProducts();
     return resp.status(200).json(products);
-  } catch (error: any) {
-    return resp.status(500).json(error.message);
+  } catch (error) {
+    return resp.status(500).json((error as Error).message);
   }
 });
 
@@ -108,17 +109,17 @@ productRouter.get('/', async (req: Request, resp: Response) => {
  *        500:
  *          description: could not find your book or unknown message
  */
-productRouter.get('/:id', async (req: Request, resp: Response) => {
+productRouter.get("/:id", async (req: Request, resp: Response) => {
   const id: number = parseInt(req.params.id, 10);
   try {
     const product = await ProductService.getProduct(id);
     if (product) {
       return resp.status(200).json(product);
     } else {
-      return resp.status(404).json('your product was not found');
+      return resp.status(404).json("your product was not found");
     }
-  } catch (error: any) {
-    return resp.status(500).json(error.message);
+  } catch (error) {
+    return resp.status(500).json((error as Error).message);
   }
 });
 
@@ -144,6 +145,8 @@ productRouter.get('/:id', async (req: Request, resp: Response) => {
  *                type: number
  *              retailSplit:
  *                type: number
+ *              detailsId:
+ *                type: number
  *            required:
  *              - upc
  *              - description
@@ -158,11 +161,11 @@ productRouter.get('/:id', async (req: Request, resp: Response) => {
  *          description: something went wrong
  */
 productRouter.post(
-  '/',
-  body('upc').isString(),
-  body('description').isString(),
-  body('retailPrice').isFloat(),
-  body('retailSplit').isInt(),
+  "/",
+  body("upc").isString(),
+  body("description").isString(),
+  body("retailPrice").isFloat(),
+  body("retailSplit").isInt(),
   async (req: Request, resp: Response) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -173,10 +176,10 @@ productRouter.post(
       const product = req.body;
       const newProduct = await ProductService.createProduct(product);
       return resp.status(200).json(newProduct);
-    } catch (error: any) {
-      return resp.status(500).json(error.message);
+    } catch (error) {
+      return resp.status(500).json((error as Error).message);
     }
-  }
+  },
 );
 
 /**
@@ -220,11 +223,11 @@ productRouter.post(
  *          description: could not find your product or unknown message
  */
 productRouter.put(
-  '/:id',
-  body('upc').isString(),
-  body('description').isString(),
-  body('retailPrice').isFloat(),
-  body('retailSplit').isInt(),
+  "/:id",
+  body("upc").isString(),
+  body("description").isString(),
+  body("retailPrice").isFloat(),
+  body("retailSplit").isInt(),
   async (req: Request, resp: Response) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -235,10 +238,10 @@ productRouter.put(
       const id: number = parseInt(req.params.id, 10);
       const updatedProduct = await ProductService.updateProduct(product, id);
       return resp.status(200).json(updatedProduct);
-    } catch (error: any) {
-      return resp.status(500).json(error.message);
+    } catch (error) {
+      return resp.status(500).json((error as Error).message);
     }
-  }
+  },
 );
 
 /**
@@ -259,12 +262,12 @@ productRouter.put(
  *        500:
  *          description: could not find your product or unknown message
  */
-productRouter.delete('/:id', async (req: Request, resp: Response) => {
+productRouter.delete("/:id", async (req: Request, resp: Response) => {
   try {
     const id: number = parseInt(req.params.id, 10);
     await ProductService.deleteProduct(id);
     return resp.status(200).json(`Your product id ${id} was deleted`);
-  } catch (error: any) {
-    return resp.status(500).json(error.message);
+  } catch (error) {
+    return resp.status(500).json((error as Error).message);
   }
 });
