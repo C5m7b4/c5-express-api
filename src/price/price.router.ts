@@ -2,7 +2,7 @@
  * @swagger
  * components:
  *   schemas:
- *     ProductDetails:
+ *     Price:
  *       type: object
  *       required:
  *         - salePrice
@@ -48,11 +48,16 @@
 /**
  * @swagger
  * paths:
- *  /api/productdetails:
- *    post:
- *      summary: create details for a product
+ *  /api/price/{id}:
+ *    delete:
+ *      summary: delete the price details for a product
  *      tags:
- *        - ProductDetails
+ *        - Price
+ *  /api/price:
+ *    post:
+ *      summary: create price details for a product
+ *      tags:
+ *        - Price
  */
 
 import express from "express";
@@ -60,17 +65,36 @@ import type { Request, Response } from "express";
 import { body, validationResult } from "express-validator";
 import { Error } from "../types";
 
-import * as ProductDetailsService from "./productDetails.service";
+import * as PriceService from "./price.service";
 
-export const productDetailsRouter = express.Router();
+export const priceRouter = express.Router();
+
+priceRouter.get("/", async (req: Request, resp: Response) => {
+  try {
+    const details = await PriceService.listDetails();
+    return resp.status(200).json(details);
+  } catch (error) {
+    return resp.status(500).json((error as Error).message);
+  }
+});
+
+priceRouter.get("/:id", async (req: Request, resp: Response) => {
+  const id: number = parseInt(req.params.id, 10);
+  try {
+    const detail = await PriceService.getProductDetail(id);
+    return resp.status(200).json(detail);
+  } catch (error) {
+    return resp.status(500).json((error as Error).message);
+  }
+});
 
 /**
  * @openapi
- * /api/productdetails:
+ * /api/price:
  *  post:
  *    tag:
- *    - productdetails
- *    description: Create details for a product
+ *    - price
+ *    description: Create price details for a product
  *    requestBody:
  *      required: true
  *      content:
@@ -111,7 +135,7 @@ export const productDetailsRouter = express.Router();
  *        500:
  *          description: something went wrong
  */
-productDetailsRouter.post(
+priceRouter.post(
   "/",
   body("salePrice").isFloat(),
   body("saleSplit").isInt(),
@@ -128,10 +152,61 @@ productDetailsRouter.post(
     }
     try {
       const details = req.body;
-      const newDetails = await ProductDetailsService.createDetails(details);
+      const newDetails = await PriceService.createDetails(details);
       return resp.status(200).json(newDetails);
     } catch (error) {
       return resp.status(500).json((error as Error).message);
     }
   },
 );
+
+priceRouter.put(
+  "/:id",
+  body("salePrice").isFloat(),
+  body("saleSplit").isInt(),
+  body("saleStart").isDate().toDate(),
+  body("saleEnd").isDate().toDate(),
+  body("tprPrice").isFloat(),
+  body("tprSplit").isInt(),
+  body("tprStart").isDate().toDate(),
+  body("tprEnd").isDate().toDate(),
+  async (req: Request, resp: Response) => {
+    const detail = req.body;
+    const id: number = parseInt(req.params.id, 10);
+
+    try {
+      const newDetails = await PriceService.updateProductDetail(detail, id);
+      return resp.status(200).json(newDetails);
+    } catch (error) {
+      return resp.status(500).json((error as Error).message);
+    }
+  },
+);
+
+/**
+ * @openapi
+ * /api/price/{id}:
+ *  delete:
+ *    tag:
+ *    - products
+ *    description: delete a products  details by its id
+ *    parameters:
+ *    - name: id
+ *      in: path
+ *      description: the id of the product details you want to delete
+ *      required: true
+ *    responses:
+ *        200:
+ *          description: your product was deleted
+ *        500:
+ *          description: could not find your product or unknown message
+ */
+priceRouter.delete("/:id", async (req: Request, resp: Response) => {
+  const id = parseInt(req.params.id, 10);
+  try {
+    await PriceService.deleteProductDetail(id);
+    return resp.status(200).json("your details have been deleted");
+  } catch (error) {
+    return resp.status(500).json((error as Error).message);
+  }
+});

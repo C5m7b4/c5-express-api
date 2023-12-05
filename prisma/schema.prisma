@@ -30,18 +30,19 @@ model Store {
 }
 
 model Product {
-  id          Int            @id @default(autoincrement())
-  createdAt   DateTime       @default(now())
-  updatedAt   DateTime       @updatedAt
+  id          Int      @id @default(autoincrement())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
   upc         String
   description String
   retailPrice Float
   retailSplit Int
-  details     ProductDetails @relation(fields: [detailsId], references: [id], onDelete: Cascade)
-  detailsId   Int            @unique
+  price       Price?
+  links       Link?
+  Flag        Flag?
 }
 
-model ProductDetails {
+model Price {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -53,5 +54,48 @@ model ProductDetails {
   tprSplit  Int
   tprStart  DateTime
   tprEnd    DateTime
-  Product   Product?
+  productId Int      @unique
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+}
+
+model Link {
+  id           Int         @id @default(autoincrement())
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  productId    Int         @unique
+  product      Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  category     Category?
+  department   Department? @relation(fields: [departmentId], references: [id])
+  departmentId Int?
+}
+
+model Flag {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  productId Int      @unique
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  tax1      Int
+  tax2      Int
+  tax3      Int
+  tax4      Int
+  fs        Int
+  wic       Int
+}
+
+model Category {
+  id          Int      @unique
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  description String
+  linkId      Int      @unique
+  link        Link     @relation(fields: [linkId], references: [id])
+}
+
+model Department {
+  id          Int      @unique
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  description String
+  Link        Link[]
 }

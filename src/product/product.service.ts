@@ -1,4 +1,5 @@
 import { db } from "../utils/db.server";
+import type { Price } from "../price/price.service";
 
 export type Product = {
   id: number;
@@ -6,7 +7,7 @@ export type Product = {
   description: string;
   retailPrice: number;
   retailSplit: number;
-  detailsId?: number;
+  price?: Price;
 };
 
 export const listProducts = async (): Promise<Product[]> => {
@@ -17,18 +18,18 @@ export const listProducts = async (): Promise<Product[]> => {
       description: true,
       retailPrice: true,
       retailSplit: true,
-      details: {
-        select: {
-          salePrice: true,
-          saleSplit: true,
-          saleStart: true,
-          saleEnd: true,
-          tprPrice: true,
-          tprSplit: true,
-          tprStart: true,
-          tprEnd: true,
-        },
-      },
+      // price: {
+      //   select: {
+      //     salePrice: true,
+      //     saleSplit: true,
+      //     saleStart: true,
+      //     saleEnd: true,
+      //     tprPrice: true,
+      //     tprSplit: true,
+      //     tprStart: true,
+      //     tprEnd: true,
+      //   },
+      // },
     },
   });
 };
@@ -48,8 +49,10 @@ export const getProduct = async (id: number): Promise<Product | null> => {
   });
 };
 
-export const createProduct = async (product: Product): Promise<Product> => {
-  const { upc, description, retailPrice, retailSplit, detailsId = 0 } = product;
+export const createProduct = async (
+  product: Omit<Product, "details">,
+): Promise<Product> => {
+  const { upc, description, retailPrice, retailSplit } = product;
 
   return db.product.create({
     data: {
@@ -57,7 +60,6 @@ export const createProduct = async (product: Product): Promise<Product> => {
       description,
       retailPrice,
       retailSplit,
-      detailsId,
     },
     select: {
       id: true,
@@ -65,7 +67,6 @@ export const createProduct = async (product: Product): Promise<Product> => {
       description: true,
       retailPrice: true,
       retailSplit: true,
-      detailsId: true,
     },
   });
 };
