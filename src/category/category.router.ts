@@ -2,7 +2,7 @@
  * @swagger
  * components:
  *   schemas:
- *     Department:
+ *     Category:
  *       type: object
  *       required:
  *         - id
@@ -10,68 +10,67 @@
  *       properties:
  *         id:
  *           type: string
- *           description: The auto-generated id of the department
+ *           description: The auto-generated id of the category
  *         description:
  *           type: string
- *           description: department description
+ *           description: category description
  *       example:
  *         id: 1
- *         description: Grocery
+ *         description: mexican
  */
 
 /**
  * @swagger
  * paths:
- *  /api/depts/{id}:
+ *  /api/categories/{id}:
  *    get:
- *      summary: get department by id
+ *      summary: get category by id
  *      tags:
- *        - Department
+ *        - Category
  *    delete:
- *      summary: delete a department
+ *      summary: delete a category
  *      tags:
- *        - Department
+ *        - Category
  *    put:
- *      summary: update a department
+ *      summary: update a category
  *      tags:
- *        - Department
- *  /api/depts:
+ *        - Category
+ *  /api/categories:
  *    get:
- *      summary: get department listing
+ *      summary: get category listing
  *      tags:
- *       - Department
+ *       - Category
  *    post:
- *      summary: create a new department
+ *      summary: create a new category
  *      tags:
- *        - Department
+ *        - Category
  */
 
 import express from "express";
-import type { Response, Request } from "express";
+import type { Request, Response } from "express";
 import { body, validationResult } from "express-validator";
-import type { Error } from "../types";
 
-import * as DeptService from "./dept.service";
+import * as CategoryService from "./category.service";
 
-export const deptRouter = express.Router();
+export const categoryRouter = express.Router();
 
 /**
  * @openapi
- * /api/depts:
+ * /api/categories:
  *  get:
  *    tag:
- *    - depts
- *    description: list all departments
+ *    - categories
+ *    description: list all categories
  *    responses:
  *        200:
- *          description: you should see a list of products
+ *          description: you should see a list of categories
  *        500:
  *          description: something went wrong
  */
-deptRouter.get("/", async (req: Request, resp: Response) => {
+categoryRouter.get("/", async (req: Request, resp: Response) => {
   try {
-    const depts = await DeptService.getDepartments();
-    return resp.status(200).json(depts);
+    const categories = await CategoryService.getCategories();
+    return resp.status(200).json(categories);
   } catch (error) {
     return resp.status(500).json((error as Error).message);
   }
@@ -79,32 +78,32 @@ deptRouter.get("/", async (req: Request, resp: Response) => {
 
 /**
  * @openapi
- * /api/depts/{id}:
+ * /api/categories/{id}:
  *  get:
  *    tag:
- *    - depts
- *    description: get a single department by its id
+ *    - categories
+ *    description: get a single category by its id
  *    parameters:
  *    - name: id
  *      in: path
- *      description: the id of the department you want
+ *      description: the id of the category you want
  *      required: true
  *    responses:
  *        200:
- *          description: you should see a list of departments
+ *          description: you should see a list of categories
  *        404:
- *          description: your department was not found
+ *          description: your category was not found
  *        500:
  *          description: could not find your book or unknown message
  */
-deptRouter.get("/:id", async (req: Request, resp: Response) => {
+categoryRouter.get("/:id", async (req: Request, resp: Response) => {
   const id: number = parseInt(req.params.id, 10);
   try {
-    const dept = await DeptService.getDepartmentById(id);
-    if (!dept) {
-      return resp.status(404).json("your department was not found");
+    const category = await CategoryService.getCategoryById(id);
+    if (!category) {
+      return resp.status(404).json("your category was not found");
     }
-    return resp.status(200).json(dept);
+    return resp.status(200).json(category);
   } catch (error) {
     return resp.status(500).json((error as Error).message);
   }
@@ -112,11 +111,11 @@ deptRouter.get("/:id", async (req: Request, resp: Response) => {
 
 /**
  * @openapi
- * /api/depts:
+ * /api/categories:
  *  post:
  *    tag:
- *    - depts
- *    description: Create a new department
+ *    - categories
+ *    description: Create a new category
  *    requestBody:
  *      required: true
  *      content:
@@ -133,25 +132,25 @@ deptRouter.get("/:id", async (req: Request, resp: Response) => {
  *              - description
  *    responses:
  *        200:
- *          description: you should see the details of the department you just created
+ *          description: you should see the details of the categories you just created
  *        400:
  *          description: errors in your validation, missing form fields
  *        500:
  *          description: something went wrong
  */
-deptRouter.post(
+categoryRouter.post(
   "/",
   body("id").isInt(),
   body("description").isString(),
   async (req: Request, resp: Response) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return resp.status(400).json({ errors: errors.array() });
+      return resp.status(400).json({ error: errors.array() });
     }
-    const dept = req.body;
     try {
-      const newDept = await DeptService.createDepartment(dept);
-      return resp.status(200).json(newDept);
+      const category = req.body;
+      const newCategory = await CategoryService.createCategory(category);
+      return resp.status(200).json(newCategory);
     } catch (error) {
       return resp.status(500).json((error as Error).message);
     }
@@ -160,15 +159,15 @@ deptRouter.post(
 
 /**
  * @openapi
- * /api/depts/{id}:
+ * /api/categories/{id}:
  *  put:
  *    tag:
- *    - depts
- *    description: update a dept by its id
+ *    - categories
+ *    description: update a category by its id
  *    parameters:
  *      - name: id
  *        in: path
- *        description: id of the department to update
+ *        description: id of the category to update
  *        required: true
  *    requestBody:
  *      required: true
@@ -186,22 +185,22 @@ deptRouter.post(
  *              - description
  *    responses:
  *        200:
- *          description: you should see the updated department
+ *          description: you should see the updated category
  *        400:
  *          description: error validating fields
  *        500:
- *          description: could not find your department or unknown message
+ *          description: could not find your categoru or unknown message
  */
-deptRouter.put(
+categoryRouter.put(
   "/:id",
   body("id").isInt(),
-  body("department").isString(),
+  body("description").isString(),
   async (req: Request, resp: Response) => {
     const id: number = parseInt(req.params.id, 10);
-    const dept = req.body;
+    const category = req.body;
     try {
-      const newDept = await DeptService.updateDepartment(dept, id);
-      return resp.status(200).json(newDept);
+      const newCategory = await CategoryService.updateCategory(category, id);
+      return resp.status(200).json(newCategory);
     } catch (error) {
       return resp.status(500).json((error as Error).message);
     }
@@ -210,27 +209,27 @@ deptRouter.put(
 
 /**
  * @openapi
- * /api/depts/{id}:
+ * /api/categories/{id}:
  *  delete:
  *    tag:
- *    - depts
- *    description: delete a department by its id
+ *    - categories
+ *    description: delete a category by its id
  *    parameters:
  *    - name: id
  *      in: path
- *      description: the id of the department you want to delete
+ *      description: the id of the category you want to delete
  *      required: true
  *    responses:
  *        200:
- *          description: your department was deleted
+ *          description: your category was deleted
  *        500:
- *          description: could not find your department or unknown message
+ *          description: could not find your category or unknown message
  */
-deptRouter.delete("/:id", async (req: Request, resp: Response) => {
-  const id = parseInt(req.params.id, 10);
+categoryRouter.delete("/:id", async (req: Request, resp: Response) => {
+  const id: number = parseInt(req.params.id, 10);
   try {
-    await DeptService.deleteDepartment(id);
-    return resp.status(200).json("your department has been deleted");
+    await CategoryService.deleteCategory(id);
+    return resp.status(200).json("your category was deleted");
   } catch (error) {
     return resp.status(500).json((error as Error).message);
   }

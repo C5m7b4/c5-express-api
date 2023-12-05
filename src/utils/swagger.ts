@@ -30,6 +30,8 @@ const options: swaggerJsdoc.Options = {
     "./src/product/product.router.ts",
     "./src/price/price.router.ts",
     "./src/dept/dept.router.ts",
+    "./src/category/category.router.ts",
+    "./src/link/link.router.ts",
   ],
 };
 

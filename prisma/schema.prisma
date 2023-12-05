@@ -59,14 +59,15 @@ model Price {
 }
 
 model Link {
-  id           Int         @id @default(autoincrement())
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
-  productId    Int         @unique
-  product      Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
-  category     Category?
-  department   Department? @relation(fields: [departmentId], references: [id])
-  departmentId Int?
+  id           Int        @id @default(autoincrement())
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  productId    Int        @unique
+  product      Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
+  category     Category?  @relation(fields: [categoryId], references: [id])
+  department   Department @relation(fields: [departmentId], references: [id])
+  departmentId Int
+  categoryId   Int?
 }
 
 model Flag {
@@ -88,8 +89,7 @@ model Category {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   description String
-  linkId      Int      @unique
-  link        Link     @relation(fields: [linkId], references: [id])
+  link        Link[]
 }
 
 model Department {
@@ -97,5 +97,5 @@ model Department {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   description String
-  Link        Link[]
+  link        Link[]
 }
