@@ -32,6 +32,7 @@ const options: swaggerJsdoc.Options = {
     "./src/dept/dept.router.ts",
     "./src/category/category.router.ts",
     "./src/link/link.router.ts",
+    "./src/flag/flag.router.ts",
   ],
 };
 

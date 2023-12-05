@@ -38,24 +38,24 @@
  *    get:
  *      summary: get product by id
  *      tags:
- *        - Products
+ *        - Product
  *    delete:
  *      summary: delete a product
  *      tags:
- *        - Products
+ *        - Product
  *    put:
  *      summary: update a product
  *      tags:
- *        - Products
+ *        - Product
  *  /api/products:
  *    get:
  *      summary: get product listing
  *      tags:
- *       - Products
+ *       - Product
  *    post:
  *      summary: create a new product
  *      tags:
- *        - Products
+ *        - Product
  */
 
 import express from "express";

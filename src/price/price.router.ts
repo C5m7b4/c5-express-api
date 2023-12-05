@@ -49,13 +49,25 @@
  * @swagger
  * paths:
  *  /api/price/{id}:
+ *    get:
+ *      summary: get price by id
+ *      tags:
+ *        - Price
  *    delete:
- *      summary: delete the price details for a product
+ *      summary: delete a price
+ *      tags:
+ *        - Price
+ *    put:
+ *      summary: update a price
  *      tags:
  *        - Price
  *  /api/price:
+ *    get:
+ *      summary: get price listing
+ *      tags:
+ *       - Price
  *    post:
- *      summary: create price details for a product
+ *      summary: create a new price
  *      tags:
  *        - Price
  */
@@ -69,6 +81,19 @@ import * as PriceService from "./price.service";
 
 export const priceRouter = express.Router();
 
+/**
+ * @openapi
+ * /api/price:
+ *  get:
+ *    tag:
+ *    - price
+ *    description: list all prices
+ *    responses:
+ *        200:
+ *          description: you should see a list of prices
+ *        500:
+ *          description: something went wrong
+ */
 priceRouter.get("/", async (req: Request, resp: Response) => {
   try {
     const details = await PriceService.listDetails();
@@ -78,6 +103,26 @@ priceRouter.get("/", async (req: Request, resp: Response) => {
   }
 });
 
+/**
+ * @openapi
+ * /api/price/{id}:
+ *  get:
+ *    tag:
+ *    - prices
+ *    description: get a single price by its id
+ *    parameters:
+ *    - name: id
+ *      in: path
+ *      description: the id of the price you want
+ *      required: true
+ *    responses:
+ *        200:
+ *          description: you should see a list of prices
+ *        404:
+ *          description: your price was not found
+ *        500:
+ *          description: could not find your book or unknown message
+ */
 priceRouter.get("/:id", async (req: Request, resp: Response) => {
   const id: number = parseInt(req.params.id, 10);
   try {
@@ -160,6 +205,46 @@ priceRouter.post(
   },
 );
 
+/**
+ * @openapi
+ * /api/price/{id}:
+ *  put:
+ *    tag:
+ *    - price
+ *    description: update a price by its id
+ *    parameters:
+ *      - name: id
+ *        in: path
+ *        description: id of the price to update
+ *        required: true
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *            type: object
+ *            properties:
+ *              salePrice:
+ *                type: number
+ *              saleSplit:
+ *                type: number
+ *              saleStart:
+ *                type: number
+ *              saleEnd:
+ *                type: number
+ *            required:
+ *              - salePrice
+ *              - saleSplit
+ *              - saleStart
+ *              - saleEnd
+ *    responses:
+ *        200:
+ *          description: you should see the updated category
+ *        400:
+ *          description: error validating fields
+ *        500:
+ *          description: could not find your categoru or unknown message
+ */
 priceRouter.put(
   "/:id",
   body("salePrice").isFloat(),

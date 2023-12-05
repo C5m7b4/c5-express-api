@@ -11,6 +11,7 @@ import { priceRouter } from "./price/price.router";
 import { deptRouter } from "./dept/dept.router";
 import { categoryRouter } from "./category/category.router";
 import { linkRouter } from "./link/link.router";
+import { flagRouter } from "./flag/flag.router";
 
 dotenv.config();
 
@@ -30,6 +31,7 @@ app.use("/api/prices", priceRouter);
 app.use("/api/depts", deptRouter);
 app.use("/api/categories", categoryRouter);
 app.use("/api/links", linkRouter);
+app.use("/api/flags", flagRouter);
 
 app.listen(port, () => {
   console.log(`listening on http://localhost:${port}`);
